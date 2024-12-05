@@ -20,7 +20,8 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader && \
     chmod -R 775 storage bootstrap/cache
 
-
+# Expose port
+EXPOSE 9000
 
 # Start the server
 CMD ["php-fpm","--host=0.0.0.0 --port=${PORT}"]

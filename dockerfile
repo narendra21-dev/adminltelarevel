@@ -23,4 +23,4 @@ RUN chmod -R 775 storage bootstrap/cache \
 EXPOSE 9000
 
 # Command to start PHP-FPM
-CMD ["php-fpm"]
+CMD ["php-fpm","--host=0.0.0.0 --port=${PORT}"]

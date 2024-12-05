@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install pdo_mysql gd zip bcmath
 
-# Copy application file
+# Copy application files
 COPY . /var/www/html
 
 # Set working directory
@@ -23,13 +23,8 @@ RUN composer install --no-dev --optimize-autoloader && \
 # Expose port
 EXPOSE 9000
 
-
-COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
-
 # Start the server
-CMD ["php-fpm","--nodaemonize", "--allow-to-run-as-root","--host=0.0.0.0 --port=${PORT}"]
+CMD ["php-fpm","--host=0.0.0.0 --port=${PORT}"]
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-

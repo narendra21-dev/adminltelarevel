@@ -1,26 +1,30 @@
-FROM php:8.1-fpm-alpine
+# Use an official PHP image with Composer
+FROM php:8.2-fpm
 
-# Install dependencies and PHP extensions
-RUN apk update && apk add --no-cache \
-    libzip-dev \
-    zip \
-    git \
-    curl \
-    && docker-php-ext-install pdo pdo_mysql \
-    && docker-php-ext-enable pdo_mysql
+# Install necessary extensions
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install pdo_mysql gd zip bcmath
 
-# Set the working directory
-WORKDIR /var/www
+# Copy application file
+COPY . /var/www/html
 
-# Copy the application files into the container
-COPY . .
+# Set working directory
+WORKDIR /var/www/html
 
-# Set permissions on Laravel directories
-RUN chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
+# Install Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Expose port 9000 for PHP-FPM
+# Run composer install
+RUN composer install --no-dev --optimize-autoloader && \
+    chmod -R 775 storage bootstrap/cache
+
+# Expose port
 EXPOSE 9000
 
-# Command to start PHP-F
-CMD ["php-fpm", "--nodaemonize","--host=0.0.0.0 --port=${PORT}"]
+# Start the server
+CMD ["php-fpm","--host=0.0.0.0 --port=${PORT}"]
+
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

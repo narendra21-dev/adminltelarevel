@@ -1,35 +1,29 @@
-# Use an official PHP image with Composer
-FROM php:8.2-fpm
+FROM php:8.1-fpm
 
-# Install necessary extensions
+# Install required extensions and tools
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install pdo_mysql gd zip bcmath
-
-# Copy application file
-COPY . /var/www/html
+    php-mbstring \
+    php-xml \
+    php-curl \
+    php-mysql \
+    unzip \
+    git \
+    && docker-php-ext-install pdo pdo_mysql
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+# Copy application files
+COPY . .
 
-# Run composer install
-RUN composer install --no-dev --optimize-autoloader && \
-    chmod -R 775 storage bootstrap/cache
+# Set permissions
+RUN chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
-# Expose port
-# EXPOSE 9000
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
 
-
-COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
-
-# Start the server
-CMD ["php-fpm","--nodaemonize", "--allow-to-run-as-root",]
-
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Start PHP-FPM
+CMD ["php-fpm", "--nodaemonize", "--allow-to-run-as-root"]
 
 

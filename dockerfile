@@ -1,23 +1,27 @@
-# Base image with PHP and required extensions
-FROM php:8.1-fpm
+# Use an official PHP image with Composer
+FROM php:8.2-fpm
 
-# Install system dependencies and Composer
+# Install necessary extensions
 RUN apt-get update && apt-get install -y \
-    php-cli php-mbstring php-xml php-curl php-mysql curl unzip git && \
-    curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer
-
-# Set working directoryy
-WORKDIR /var/www
+    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install pdo_mysql gd zip bcmath
 
 # Copy application files
-COPY . .
+COPY . /var/www/html
 
+# Set working directory
+WORKDIR /var/www/html
 
-RUN chmod -R 775 storage bootstrap/cache
+# Install Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Expose port 8000
-EXPOSE 8000
+# Run composer install
+RUN composer install --no-dev --optimize-autoloader && \
+    chmod -R 775 storage bootstrap/cache
 
-# Run Laravel application
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Expose port
+EXPOSE 9000
+
+# Start the server
+CMD ["php-fpm"]

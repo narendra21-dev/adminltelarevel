@@ -24,4 +24,4 @@ RUN composer install --no-dev --optimize-autoloader && \
 EXPOSE 9000
 
 # Start the server
-CMD ["php-fpm"]
+CMD ["php-fpm","--host=0.0.0.0", "--port=8000"]

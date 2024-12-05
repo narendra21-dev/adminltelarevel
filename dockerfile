@@ -1,4 +1,6 @@
-FROM php:8.1-fpm
+FROM php:8.1-fpm-alpine
+
+RUN docker-php-ext-install pdo pdo_mysql
 
 # Update and install required packages
 RUN apt-get update && apt-get install -y \
@@ -27,3 +29,4 @@ EXPOSE 9000
 
 # Start PHP-FPM
 CMD ["php-fpm"]
+

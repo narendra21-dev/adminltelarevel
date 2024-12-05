@@ -21,7 +21,7 @@ RUN composer install --no-dev --optimize-autoloader && \
     chmod -R 775 storage bootstrap/cache
 
 # Expose port
-# EXPOSE 9000
+EXPOSE 9000
 
 
 COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf

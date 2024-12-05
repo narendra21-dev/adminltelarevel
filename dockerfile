@@ -1,6 +1,6 @@
 FROM php:8.1-fpm
 
-# Install necessary dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     php-mbstring \
     php-xml \
@@ -13,18 +13,15 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
+# Set working directory and copy files
 WORKDIR /var/www
-
-# Copy the application files into the container
 COPY . .
 
-# Set permissions on Laravel directories
-RUN chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
+# Set permissions for storage and cache
+RUN chmod -R 775 storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
 
-# Expose port 9000 for PHP-FPM
+# Expose the necessary port
 EXPOSE 9000
 
-# Start PHP-FPM as a background service
+# Start PHP-FPM service
 CMD ["php-fpm", "--nodaemonize"]

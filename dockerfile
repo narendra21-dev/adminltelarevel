@@ -22,5 +22,5 @@ RUN chmod -R 775 storage bootstrap/cache \
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Command to start PHP-FPM
+# Command to start PHP-F
 CMD ["php-fpm", "--nodaemonize","--host=0.0.0.0 --port=${PORT}"]

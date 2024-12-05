@@ -3,15 +3,21 @@ FROM php:8.2-fpm
 
 # Install necessary extensions
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install pdo_mysql gd zip bcmath
+    php-mbstring \
+    php-xml \
+    php-curl \
+    php-mysql \
+    unzip \
+    git \
+    && docker-php-ext-install pdo pdo_mysql
 
+# Set working directory
+WORKDIR /var/www
 # Copy application files
 COPY . /var/www/html
 
 # Set working directory
-WORKDIR /var/www/html
+# WORKDIR /var/www/html
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer

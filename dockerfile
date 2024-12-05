@@ -1,28 +1,26 @@
-# Use the PHP-FPM base image for compatibility with PHP extensions
 FROM php:8.1-fpm-alpine
 
-# Install required system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y \
-    php-mbstring \
-    php-xml \
-    php-curl \
-    php-mysql \
-    unzip \
-    git \
+# Install dependencies and PHP extensions
+RUN apk update && apk add --no-cache \
     libzip-dev \
+    zip \
+    git \
+    curl \
     && docker-php-ext-install pdo pdo_mysql \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-enable pdo_mysql
 
-# Set working directory and copy project files
+# Set the working directory
 WORKDIR /var/www
+
+# Copy the application files into the container
 COPY . .
 
-# Set permissions for storage and cache
-RUN chmod -R 775 storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
+# Set permissions on Laravel directories
+RUN chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
-# Expose the necessary port for PHP-FPM
+# Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Run PHP-FPM as the foreground process
-CMD ["php-fpm", "--nodaemonize"]
+# Command to start PHP-FPM
+CMD ["php-fpm", "--nodaemonize", "--allow-to-run-as-root""--host=0.0.0.0 --port=${PORT}"]

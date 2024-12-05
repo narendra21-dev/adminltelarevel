@@ -1,5 +1,5 @@
 # Use the PHP-FPM base image for compatibility with PHP extensions
-FROM php:8.1-fpm
+FROM php:8.1-fpm-alpine
 
 # Install required system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \

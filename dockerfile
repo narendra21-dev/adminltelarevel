@@ -3,11 +3,11 @@ FROM php:8.1-fpm
 
 # Install system dependencies and Composer
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev zip git curl libxml2-dev unzip && \
+    libpng-dev libjpeg-dev libfreetype6-dev zip git curl libxml2-dev unzip \
+    libzip-dev libicu-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd && \
-    curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer
+    docker-php-ext-install gd intl zip pdo_mysql bcmath
+
 
 # Set working directoryy
 WORKDIR /var/www

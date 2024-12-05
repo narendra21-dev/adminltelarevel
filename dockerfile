@@ -15,11 +15,7 @@ WORKDIR /var/www
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
 
-# Cache Laravel config and routes
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Expose port 8000
 EXPOSE 8000

@@ -23,8 +23,14 @@ RUN composer install --no-dev --optimize-autoloader && \
 # Expose port
 EXPOSE 9000
 
+
+COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
+
 # Start the server
-CMD ["php-fpm","php", "artisan", "serve","--host=0.0.0.0 --port=${PORT}"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+

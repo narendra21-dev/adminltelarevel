@@ -1,13 +1,17 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.1-fpm
 
-# Install dependencies and PHP extensions
-RUN apk update && apk add --no-cache \
-    libzip-dev \
-    zip \
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    php-mbstring \
+    php-xml \
+    php-curl \
+    php-mysql \
+    unzip \
     git \
-    curl \
+    libzip-dev \
     && docker-php-ext-install pdo pdo_mysql \
-    && docker-php-ext-enable pdo_mysql
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /var/www
@@ -22,5 +26,5 @@ RUN chmod -R 775 storage bootstrap/cache \
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Command to start PHP-FPM
-CMD ["php-fpm", "--nodaemonize", "--allow-to-run-as-root","--host=0.0.0.0", "--port=80"]
+# Start PHP-FPM as a background service
+CMD ["php-fpm", "--nodaemonize"]

@@ -1,6 +1,7 @@
+# Use the PHP-FPM base image for compatibility with PHP extensions
 FROM php:8.1-fpm
 
-# Install system dependencies and PHP extensions
+# Install required system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     php-mbstring \
     php-xml \
@@ -13,15 +14,15 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory and copy files
+# Set working directory and copy project files
 WORKDIR /var/www
 COPY . .
 
 # Set permissions for storage and cache
 RUN chmod -R 775 storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
 
-# Expose the necessary port
+# Expose the necessary port for PHP-FPM
 EXPOSE 9000
 
-# Start PHP-FPM service
+# Run PHP-FPM as the foreground process
 CMD ["php-fpm", "--nodaemonize"]

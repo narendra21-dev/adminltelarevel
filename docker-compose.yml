@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  adminltelaravel:
+    image: adminltelaravel
+    build:
+      context: vendor/laravel/framework/src/Illuminate/Foundation/resources/exceptions/renderer
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000

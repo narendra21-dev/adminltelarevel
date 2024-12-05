@@ -17,8 +17,7 @@ WORKDIR /var/www
 # Copy application files
 COPY . .
 
-# Install Composer dependencies
-RUN composer install --no-dev --optimize-autoloader --verbose
+
 
 # Run Laravel commands
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache

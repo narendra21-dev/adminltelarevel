@@ -21,13 +21,13 @@ RUN composer install --no-dev --optimize-autoloader && \
     chmod -R 775 storage bootstrap/cache
 
 # Expose port
-EXPOSE 9000
+# EXPOSE 9000
 
 
 COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Start the server
-CMD ["php-fpm","--nodaemonize", "--allow-to-run-as-root","--host=0.0.0.0 --port=${PORT}"]
+CMD ["php-fpm","--nodaemonize", "--allow-to-run-as-root",]
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

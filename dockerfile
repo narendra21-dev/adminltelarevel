@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
 
-# Set working directory
+# Set working directoryy
 WORKDIR /var/www
 
 # Copy application files

@@ -1,7 +1,6 @@
-# Use an official PHP image with Composer
-FROM php:8.2-fpm
+FROM php:8.1-fpm
 
-# Install necessary extensions
+# Install necessary extensions and tools
 RUN apt-get update && apt-get install -y \
     php-mbstring \
     php-xml \
@@ -13,25 +12,16 @@ RUN apt-get update && apt-get install -y \
 
 # Set working directory
 WORKDIR /var/www
+
 # Copy application files
-COPY . /var/www/html
+COPY . .
 
-# Set working directory
-# WORKDIR /var/www/html
+# Set permissions
+RUN chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
-# Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
-
-# Run composer install
-RUN composer install --no-dev --optimize-autoloader && \
-    chmod -R 775 storage bootstrap/cache
-
-# Expose port
+# Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Start the server
+# Start PHP-FPM as root
 CMD ["php-fpm", "--nodaemonize", "--allow-to-run-as-root","--host=0.0.0.0", "--port=80"]
-
-
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

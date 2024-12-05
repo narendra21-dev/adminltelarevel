@@ -1,13 +1,15 @@
-# Base image with PHP and required extensions
+# Use the official PHP image with required extensions
 FROM php:8.1-fpm
 
-# Install system dependencies and Composer
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev zip git curl libxml2-dev unzip && \
+    libpng-dev libjpeg-dev libfreetype6-dev zip git curl libxml2-dev unzip \
+    libzip-dev libicu-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd && \
-    curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer
+    docker-php-ext-install gd intl zip
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 # Set working directory
 WORKDIR /var/www
@@ -15,10 +17,10 @@ WORKDIR /var/www
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install Composer dependencies
+RUN composer install --no-dev --optimize-autoloader --verbose
 
-# Cache Laravel config and routes
+# Run Laravel commands
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Expose port 8000

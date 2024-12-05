@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install pdo_mysql gd zip bcmath
 
-# Copy application files
+# Copy application file
 COPY . /var/www/html
 
 # Set working directory

@@ -27,8 +27,7 @@ EXPOSE 9000
 COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Start the server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
-
+CMD ["php-fpm","--nodaemonize", "--allow-to-run-as-root","--host=0.0.0.0 --port=${PORT}"]
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

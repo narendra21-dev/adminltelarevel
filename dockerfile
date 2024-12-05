@@ -1,32 +1,26 @@
 FROM php:8.1-fpm-alpine
 
-RUN docker-php-ext-install pdo pdo_mysql
-
-# Update and install required packages
-RUN apt-get update && apt-get install -y \
-    php-mbstring \
-    php-xml \
-    php-curl \
-    php-mysql \
-    unzip \
-    git \
+# Install dependencies and PHP extensions
+RUN apk update && apk add --no-cache \
     libzip-dev \
+    zip \
+    git \
+    curl \
     && docker-php-ext-install pdo pdo_mysql \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-enable pdo_mysql
 
-# Set working directory
+# Set the working directory
 WORKDIR /var/www
 
-# Copy application files
+# Copy the application files into the container
 COPY . .
 
-# Set permissions for Laravel directories
+# Set permissions on Laravel directories
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Start PHP-FPM
+# Command to start PHP-FPM
 CMD ["php-fpm"]
-
